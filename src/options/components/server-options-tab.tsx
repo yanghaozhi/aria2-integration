@@ -32,6 +32,7 @@ function ServerOptionsTab({ extensionOptions, setExtensionOptions, server, delet
   const [validated, setValidated] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [alertProps, setAlertProps] = useState(new AlertProps());
+  const [serverPrefix, setServerPrefix] = useState(server.prefix ?? "");
 
   function serializeRpcParameters(rpcParameters: string): Record<string, string> {
     const newRpcParameters: Record<string, string> = {};
@@ -49,7 +50,9 @@ function ServerOptionsTab({ extensionOptions, setExtensionOptions, server, delet
 
   function serverUrl(): URL | null {
     try {
-      return new URL(`http${serverSecure ? "s" : ""}://${serverHost}:${serverPort}/jsonrpc`);
+      const cleanPrefix = serverPrefix.trim().replace(/^\/+|\/+$/g, "");
+      const prefixPart = cleanPrefix ? `/${cleanPrefix}` : "";
+      return new URL(`http${serverSecure ? "s" : ""}://${serverHost}:${serverPort}${prefixPart}/jsonrpc`);
     } catch (_) {
       return null;
     }
@@ -61,8 +64,10 @@ function ServerOptionsTab({ extensionOptions, setExtensionOptions, server, delet
     const form = formEvent.currentTarget;
     if (form.checkValidity()) {
       try {
+        const cleanPrefix = serverPrefix.trim().replace(/^\/+|\/+$/g, "");
+        const computedPath = cleanPrefix ? `/${cleanPrefix}/jsonrpc` : "/jsonrpc";
         const newExtensionOptions = await extensionOptions.addServer(
-          new Server(server.uuid, serverName, serverSecure, serverHost, serverPort, "/jsonrpc", serverSecret, serializeRpcParameters(serverRpcParameters)),
+          new Server(server.uuid, serverName, serverSecure, serverHost, serverPort, computedPath, serverSecret, serializeRpcParameters(serverRpcParameters), serverPrefix),
         );
         setExtensionOptions(newExtensionOptions);
         setAlertProps(AlertProps.success(i18n("serverOptionsSuccess")));
@@ -106,6 +111,24 @@ function ServerOptionsTab({ extensionOptions, setExtensionOptions, server, delet
         <Form.Group as={Col} controlId="form-server-secure">
           <Form.Label>{i18n("serverOptionsSecureConnection")}</Form.Label>
           <Form.Check checked={serverSecure} onChange={(e) => setServerSecure(e.target.checked)} />
+        </Form.Group>
+      </Row>
+
+        {/* 原有的 Port 输入框之后插入 */}
+      <Row className="mb-3">
+        <Form.Group as={Row} className="mb-3">
+          <Form.Label column sm="3">
+            {i18n("serverOptionsPrefix")}
+          </Form.Label>
+          <Col sm="9">
+            <Form.Control
+              type="text"
+              value={serverPrefix}
+              onChange={(e) => setServerPrefix(e.target.value)}
+              placeholder="例如：prefix 或 aria2（留空则使用默认 /jsonrpc）"
+            />
+            <Form.Text muted>将插入在 host:port 和 /jsonrpc 之间</Form.Text>
+          </Col>
         </Form.Group>
       </Row>
 

@@ -20,6 +20,9 @@
   "serverOptionsPort": {
     "message": "端口"
   },
+  "serverOptionsPrefix": {
+    "message": "前缀"
+  },
   "serverOptionsSecureConnection": {
     "message": "安全连接"
   },

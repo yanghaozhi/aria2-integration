@@ -10,6 +10,7 @@ export default class Server {
     public readonly path: string = "/jsonrpc",
     public readonly secret: string = "",
     public readonly rpcParameters: Record<string, string> = {},
+    public readonly prefix: string = "",
   ) {}
 
   serialize(): string {

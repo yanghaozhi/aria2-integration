@@ -20,6 +20,9 @@
   "serverOptionsPort": {
     "message": "Port"
   },
+  "serverOptionsPrefix": {
+    "message": "Prefix"
+  },
   "serverOptionsSecureConnection": {
     "message": "Secure connection"
   },
