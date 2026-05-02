@@ -105,7 +105,7 @@ function ServerOptionsTab({ extensionOptions, setExtensionOptions, server, delet
       <Row className="mb-3">
         <Form.Group as={Col} controlId="form-server-port">
           <Form.Label>{i18n("serverOptionsPort")}</Form.Label>
-          <Form.Control type="number" min={0} max={49151} value={serverPort} required onChange={(e) => setServerPort(Number.parseInt(e.target.value, 10))} />
+          <Form.Control type="number" min={0} max={65536} value={serverPort} required onChange={(e) => setServerPort(Number.parseInt(e.target.value, 10))} />
         </Form.Group>
 
         <Form.Group as={Col} controlId="form-server-secure">
